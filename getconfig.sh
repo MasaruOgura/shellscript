@@ -38,7 +38,10 @@ while read row; do
   BOTNAME="diff result"
   FACEICON=":raising_hand:"
   TMPFILE=$(mktemp)
-  cat ${dir}/diff.log | tr '\n' '\\' | sed 's/\\/\\n/g' > ${TMPFILE}
+  if [ -s ${dir}/diff.log ]; then
+    echo '```' > ${TMPFILE}
+    cat ${dir}/diff.log | tr '\n' '\\' | sed 's/\\/\\n/g'>> ${TMPFILE}
+    echo '```' >> ${TMPFILE}
   WEBMESSAGE=$(cat ${TMPFILE})
   curl -s -S -X POST --data-urlencode "payload={ \
     \"channel\": \"${CHANNEL}\", \
@@ -46,8 +49,9 @@ while read row; do
     \"icon_emoji\": \"${FACEICON}\", \
     \"text\": \"${WEBMESSAGE}\" \
     }" ${WEBHOOKURL} >/dev/null
-  if [ -f "${TMPFILE}" ] ; then
-    rm -f ${TMPFILE}
+    if [ -f "${TMPFILE}" ] ; then
+      rm -f ${TMPFILE}
+    fi
   fi
   exit 0
 done < customerlist.csv
