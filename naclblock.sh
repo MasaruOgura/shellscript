@@ -25,6 +25,7 @@ while read row; do
   if [ $count -gt 10 ];
   then
 # 注意)NACLのルールナンバー10に設定されたら、上書きしないので、もうこのスクリプトは機能しません
+# aws configureを実行して、リージョンを設定しておいてください
   aws ec2 create-network-acl-entry --network-acl-id <NACL-id> --ingress --rule-number 10 --protocol -1 --cidr-block ${countlist[1]}/32 --rule-action deny
   fi
 done < /home/ec2-user/tmpfile4
